@@ -20,39 +20,62 @@ struct FastIO {
 		return *this;
 	}
 } io;
-const int N = 1e5 + 3;
 using namespace std;
+const int N = 1e5 + 3;
 # include "set"
+# include "queue"
 set<int> st;
+int n, K;
+struct node {
+    int x, y;
+    bool operator < (const node &els) const {
+        if (y - x != els.y - els.x) return y - x > els.y - els.x;
+        return  x + y > els.x + els.y;
+    }
+};
+priority_queue<node> q;
 int main() {
 FileOpen();
 FileSave();
-    int n, K;
     io >> n >> K;
-    // D_e_Line;
     for (int i = 1; i <= n; ++i) {
         int x;
         io >> x;
         st.insert(x);
     }
-        // D_e(st.size());
+    for (auto it = st.begin(); next(it) != st.end(); ++it) {
+        q.push({*it, *next(it)});
+    }
+    // while (!q.empty()) {
+    //     printf("[%d %d]\n", q.top().x, q.top().y);
+    //     q.pop();
+    // }
+    // return 0;
     int turns = 0;
     while (st.size() > 1) {
-        int min_del = K + 1;
-        auto min_pos = st.begin();
-        for (auto it1 = st.begin(), it2 = next(it1); it2 != st.end(); it1 = it2, ++it2) {
-            if (*it2 - *it1 < min_del) {
-                min_del = *it2 - *it1;
-                min_pos = it1;
+        node now = q.top();
+        q.pop();
+        auto it1 = st.find(now.x);
+        auto it2 = st.find(now.y);
+        if (it1 == st.end() || it2 == st.end()) continue;
+        ++turns;
+        if (it1 != st.begin() && next(it2) != st.end()) {
+            q.push({*prev(it1), *next(it2)});
+        }
+        st.erase(now.x);
+        st.erase(now.y);
+        int new_val = (now.x + now.y) % K;
+        auto it3 = st.find(new_val);
+        if (it3 == st.end()) {
+            st.insert(new_val);
+            it3 = st.find(new_val);
+            if (it3 != st.begin()) {
+                q.push({*prev(it3), *it3});
+            }
+            if (next(it3) != st.end()) {
+                q.push({*it3, *next(it3)});
             }
         }
-        int new_val = ((*min_pos + *(next(min_pos))) % K + K) % K;
-        // D_e(new_val);
-        st.erase(next(min_pos));
-        st.erase(min_pos);
-        st.insert(new_val);
-        // D_e(st.size());
-        ++turns;
     }
     printf("%d\n%d\n", turns, *st.begin());
     return 0;
