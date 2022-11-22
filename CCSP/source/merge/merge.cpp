@@ -25,7 +25,8 @@ using namespace std;
 # include "set"
 set<int> st;
 int main() {
-// FileOpen();
+FileOpen();
+FileSave();
     int n, K;
     io >> n >> K;
     // D_e_Line;
