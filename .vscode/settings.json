@@ -73,6 +73,10 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "queue": "cpp",
+        "luogup1379_八数码难题": "cpp"
     }
 }

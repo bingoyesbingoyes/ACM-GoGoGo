@@ -12,7 +12,7 @@
 # define FileSave() freopen("out.txt", "w", stdout)
 # define Pause() system("pause")
 struct FastIO {
-	template<typename ATP> inline FastIO& operator >> (ATP &x) {
+	template<typename ATP> inline FastIO& operator >> (ATP& x) {
 		x = 0; int f = 1; char c;
 		for (c = getchar(); c < '0' || c > '9'; c = getchar()) if (c == '-') f = -1;
 		while (c >= '0' && c <= '9') x = x * 10 + (c ^ '0'), c = getchar();
@@ -20,3 +20,12 @@ struct FastIO {
 		return *this;
 	}
 } io;
+template<typename ATP> ATP Min(ATP x, ATP y) {
+	return x < y ? x : y;
+}
+template<typename ATP> ATP Max(ATP x, ATP y) {
+	return x > y ? x : y;
+}
+template<typename ATP> ATP Abs(ATP x) {
+	return x > 0 ? x : -x;
+}

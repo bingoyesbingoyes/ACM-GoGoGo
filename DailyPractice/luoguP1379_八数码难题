@@ -1,0 +1,114 @@
+# include "iostream"
+# include "cstdio"
+# include "cmath"
+# include "cstring"
+# include "numeric"
+# include "vector"
+# include "algorithm"
+
+# define D_e_Line printf("\n-------------\n")
+# define D_e(x) cout << "[" << (#x) << " :    " << (x) << "]\n"
+# define FileOpen() freopen("in.txt", "r", stdin)
+# define FileSave() freopen("out.txt", "w", stdout)
+# define Pause() system("pause")
+struct FastIO {
+	template<typename ATP> inline FastIO& operator >> (ATP& x) {
+		x = 0; int f = 1; char c;
+		for (c = getchar(); c < '0' || c > '9'; c = getchar()) if (c == '-') f = -1;
+		while (c >= '0' && c <= '9') x = x * 10 + (c ^ '0'), c = getchar();
+		if (f == -1) x = -x;
+		return *this;
+	}
+} io;
+template<typename ATP> ATP Min(ATP x, ATP y) {
+	return x < y ? x : y;
+}
+template<typename ATP> ATP Max(ATP x, ATP y) {
+	return x > y ? x : y;
+}
+template<typename ATP> ATP Abs(ATP x) {
+	return x > 0 ? x : -x;
+}
+using namespace std;
+// The final, solved state of the 8-puzzle
+char final_state[] = {'1', '2', '3', '8', '0', '4', '7', '6', '5'};
+// Offsets for moving the empty space in the 8-puzzle
+int dx[] = {0, 1, -1, 0};
+int dy[] = {1, 0, 0, -1};
+// The initial state of the 8-puzzle
+char init_state[13];
+// The maximum depth of the search
+int max_depth;
+// Flag to indicate if a solution has been found
+bool flag = false;
+int main() {
+    // Read the initial state of the puzzle from input
+    scanf("%s", init_state);
+
+    // The h_func function estimates the number of remaining steps to solve the puzzle
+    // by counting the number of mismatched numbers in the current state compared to the final state
+    auto h_func = [&](char* current_state) -> int {
+        int mismatch_count = 0;
+        for (int i = 0; i <= 8; ++i) {
+            if (final_state[i] != current_state[i] && current_state[i] != 0) {
+                ++mismatch_count;
+            }
+        }
+        return mismatch_count;
+    };
+
+    // Depth-first search function
+    function<void(int, char*, int)> dfs = [&](int last_step, char* current_state, int depth) {
+        // If a solution has already been found, return immediately
+        if (flag == true) return;
+        // If the puzzle is already solved, set the flag to true and return
+        if (h_func(current_state) == 0) {
+            flag = true;
+            return;
+        }
+        // If the current depth plus the estimated number of remaining steps
+        // is greater than the maximum depth, return without doing anything
+        if (depth + h_func(current_state) - 1 > max_depth) return;
+        // Find the location of the empty space in the puzzle
+        pair<int, int> st;
+        for (int i = 0; i <= 8; ++i) {
+            if (current_state[i] == '0') {
+                st.first = i / 3 + 1;
+                st.second = i % 3 + 1;
+                break;
+            }
+        }
+        // Generate a list of possible moves
+        for (int i = 0; i < 4; ++i) {
+            int fx = st.first + dx[i];
+            int fy = st.second + dy[i];
+            // If the move is invalid (e.g. the empty tile would move
+            // outside of the grid), or the move is the opposite of
+            // the last move (e.g. if the last move was to the left,
+            // don't try to move to the right), continue to the next
+            if (fx < 1 || fy < 1 || fx > 3 || fy > 3 || last_step + i == 3) continue;
+            // Swap the position of the blank tile with the tile in the specified direction
+            swap(current_state[(fx - 1) * 3 + fy - 1], current_state[(st.first - 1) * 3 + st.second - 1]);
+            // Recursively search for a solution with the updated puzzle state
+            dfs (i, current_state, depth + 1);
+            // Swap the position of the blank tile back to its original location (undo the move)
+            swap(current_state[(fx - 1) * 3 + fy - 1], current_state[(st.first - 1) * 3 + st.second - 1]);
+        }
+    };
+
+    // If meet is the best result, if, if... but...
+    if (h_func(init_state) == 0) {
+        printf("0");
+        return 0;
+    }
+
+    // Repeatedly call dfs() with increasing max_depth until a solution is found
+    for (max_depth = 1; ; ++max_depth) {
+        dfs(-999, init_state, 0);
+        if (flag == true) {
+            printf("%d", max_depth);
+            break;
+        }
+    }
+    return 0;
+}
