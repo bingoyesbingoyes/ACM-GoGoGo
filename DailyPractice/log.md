@@ -26,3 +26,12 @@
 ## 22.12.29
 
 - CF#841D Valiant's New Map  【二分，前缀和】
+
+## 22.12.31
+
+- CF1770C Koxia and Number Theory    【中国剩余定理】
+  
+>
+https://en.wikipedia.org/wiki/Chinese_remainder_theorem
+
+https://zh.wikipedia.org/wiki%E4%B8%AD%E5%9B%BD%E5%89%A9%E4%BD%99%E5%AE%9A%E7%90%86
